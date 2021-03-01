@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "693078632057",
+    "firebase_url": "https://typ-supportingemotions-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "typ-supportingemotions",
+    "storage_bucket": "typ-supportingemotions.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693078632057:android:fdaa1ca1d2df1ab345d6a8",
+        "android_client_info": {
+          "package_name": "typ.supportingemotions"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "693078632057-h0mj8507e69if3o46p27blonl45fhrc2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIlmwbw1X5TVMiaKvejV1ZkpFqI2zzKfE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "693078632057-h0mj8507e69if3o46p27blonl45fhrc2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
