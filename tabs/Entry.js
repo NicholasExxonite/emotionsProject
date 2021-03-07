@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet,ScrollView, Image, Text, View, TextInput, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView } from 'react-native';
 import { getDatabase } from "../database";
 import firebase from '@firebase/app';
@@ -21,18 +21,52 @@ export default function Entry({route, navigation}) {
      emotionone,
      emotiontwo,
      emotionthree,
-     uri
+     reflection,
+     uri,
+
   } = route.params;
    const [ref_text, setRef_text] = React.useState('')
+   const [reflections, setReflections] = useState(0)
+
    const width = useWindowDimensions().width;
    const height = useWindowDimensions().height;
+   const deleteImage = require('../assets/Basic_Element_15-30_(235).jpg');
+   // let reflections = '';
   // const {emotion, add_info} = route.params;
-  function pressSubmit(emotion){
-    getDatabase().ref('users/'+ firebase.auth().currentUser.uid).child(key).update({
-      reflections: emotion,
+  function pressSubmitReflections(){
+    getDatabase().ref('userstest/'+ firebase.auth().currentUser.uid).child(key).update({
+      reflection: reflections,
     });
+    alert("Reflection submitted!")
   }
 
+  function renderReflections(){
+    if(!reflection){
+        if(!reflections){
+          return(
+            <Text>No reflections yet</Text>
+          )
+        }else{
+          return(
+            <Text>{reflections}</Text>
+          )
+        }
+    }else {
+      return(
+        <Text style={{fontSize: 20}}>{reflection}</Text>
+      )
+    }
+  }
+  function onPressDelete(){
+    alert("Long press the delete button to delete entry")
+  }
+
+  function deleteEntry(){
+    getDatabase().ref('userstest/'+ firebase.auth().currentUser.uid).child(key).remove()
+    console.log("deleted");
+    alert("Entry deleted!")
+
+  }
 
   function renderHeader(){
     return(
@@ -46,6 +80,10 @@ export default function Entry({route, navigation}) {
             style={{width:100, height:100}}
             alt="haha"/>
           <Text style={{fontSize: 24, fontWeight: '600', marginLeft: 100, alignSelf: 'center'}}>{emotionone.toUpperCase()}</Text>
+
+          <TouchableOpacity style={{right: 0, position: 'absolute', marginLeft: 10, alignSelf: 'center', justifyContent: 'flex-end'}} onPress={()=> onPressDelete() } onLongPress={() => deleteEntry()}>
+            <Image style={{height: 60, width: 60}}source={deleteImage}/>
+          </TouchableOpacity>
       </View>
     )
   }
@@ -95,9 +133,11 @@ export default function Entry({route, navigation}) {
 
     //Check accountability
     if(accountability==="me"){
-      acc_output = "I am accountable for this event."
+      acc_output = "I am responsible for this event."
+    }else if(accountability==="not_me"){
+      acc_output= "Someone else is responsible for this event."
     }else {
-      acc_output= "Someone else is accountable for this event."
+      acc_output = "I am not sure who is responsible"
     }
 
     //Check if it presents obstacles
@@ -129,9 +169,25 @@ export default function Entry({route, navigation}) {
 
       {renderAccount_Goals()}
 
+      <Text style={{alignSelf: 'center', marginTop: 20, fontSize: 18}}>Reflections: </Text>
+      {renderReflections()}
 
-      <Text style={{marginTop: 20, fontSize: 18, opacity: 70}}>Additional feelings:</Text>
+
+      <Text style={{marginTop: 30, fontSize: 16, opacity: 0.6}}>Additional feelings:</Text>
       <Text>{emotiontwo.toUpperCase()}</Text>
+      <Text>{emotionthree.toUpperCase()}</Text>
+
+
+
+      <View style={{marginTop: 30}}>
+
+
+        <TextInput style={styles.inputfields} onChangeText = { text => setReflections(text)}
+        placeholder = "type reflection.." placeholderTextColor="black"/>
+
+      <TouchableOpacity style={styles.subBut} onPress={() => pressSubmitReflections()}><Text style={{color: 'white', alignSelf: 'center'}}>Submit reflection</Text></TouchableOpacity>
+
+      </View>
 
     </ScrollView>
   );}
@@ -147,6 +203,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'black',
     marginBottom: 10,
+  },
+  subBut:{
+    marginTop: 10,
+    alignSelf: 'center',
+    backgroundColor: '#1b1054',
+    height: 40,
+    width: 150,
+    borderRadius: 60,
+    justifyContent: 'center'
   },
   inputfield: {
     margin: 5,
@@ -170,5 +235,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     alignSelf: 'center',
     marginBottom: 30,
-  }
+  },
+  inputfields: {
+    margin: 5,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#1b1054',
+    // elevation: 1,
+
+    // flex: 1
+  },
 });

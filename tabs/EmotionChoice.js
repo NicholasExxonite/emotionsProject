@@ -35,8 +35,8 @@ class EmotionChoice extends React.Component {
 
   }
   onChoosePrimaryEmotion = (emotion, img) =>{
-    console.log(emotion);
-    console.log(img);
+    // console.log(emotion);
+    // console.log(img);
     this.setState({emotionone: emotion, image: img})
   }
 
@@ -109,9 +109,11 @@ class EmotionChoice extends React.Component {
 
     //Check accountability
     if(this.state.accountability==="me"){
-      acc_output = "I am accountable for this event."
-    }else {
-      acc_output= "Someone else is accountable for this event."
+      acc_output = "I am responsible for this event."
+    }else if(this.state.accountability==="not_me"){
+      acc_output= "Someone else is responsible for this event."
+    }else if (this.state.accountability==="not_sure") {
+      acc_output="I am not sure who is responsible for this event."
     }
 
     //Check if it presents obstacles
@@ -170,6 +172,8 @@ class EmotionChoice extends React.Component {
       emotiontwo: emtwo,
       emotionthree: emthree
     });
+
+    this.props.navigation.navigate("Reflect");
   }
   render () {
     return(
@@ -223,8 +227,8 @@ const  styles= StyleSheet.create({
   },
   text2:{
     fontSize: 22,
-     alignSelf: 'center',
-      fontWeight: '600'
+    alignSelf: 'center',
+    fontWeight: '600'
   },
   inputfields: {
     margin: 5,

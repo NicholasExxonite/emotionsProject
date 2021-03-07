@@ -34,8 +34,8 @@ class Understand extends React.Component {
   {
     getDatabase().ref('userstest/' + firebase.auth().currentUser.uid).on('value', (snapshot) =>{
       var list =[];
-      console.log(snapshot);
-      console.log(firebase.auth().currentUser.uid);
+      // console.log(snapshot);
+      // console.log(firebase.auth().currentUser.uid);
       snapshot.forEach((child) => {
         list.push({
           key: child.key,
@@ -54,7 +54,7 @@ class Understand extends React.Component {
       })
       this.setState({entryList: list})
       this.setState({arrayholder: list})
-      console.log(list)
+      // console.log(list)
     })
   }
 
@@ -74,7 +74,7 @@ class Understand extends React.Component {
 
 
   logEntries = () =>{
-    console.log(this.state.entryList);
+    console.log();
   }
 
   //For some reason doesn't update automatically, have to press the button 2 times.
@@ -84,12 +84,17 @@ class Understand extends React.Component {
     let obstacle = 0;
     let obstacleOutput = '';
     let accountability = 0;
+    let accountability_me = 0;
+    let accountability_someone_else = 0;
+    let accountabiliy_not_sure = 0;
     let accountabilityOutput = '';
+
+
 
     this.state.entryList.map((entry) => {
       intens += entry.intensityValue;
       valence += entry.valenceValue;
-      console.log("going through map");
+      // console.log("going through map");
       if(entry.challenges_goals === "yes")
       {
         obstacle ++;
@@ -101,10 +106,15 @@ class Understand extends React.Component {
       if(entry.accountability === "not_me")
       {
         accountability ++;
+        accountability_someone_else++;
       }
       else if (entry.accountability ==="me")
       {
         accountability --;
+        accountability_me++
+      }
+      else if (entry.accountability ==="not_sure") {
+        accountabiliy_not_sure++;
       }
     })
 
@@ -114,12 +124,22 @@ class Understand extends React.Component {
     }else {
       obstacleOutput = "doesn't present an obstacles towards a goal"
     }
-    if(accountability >= 0)
-    {
-      accountabilityOutput = "not_me"
-    }
-    else{
+
+    // if(accountability >= 0)
+    // {
+    //   accountabilityOutput = "not_me"
+    // }
+    // else{
+    //   accountabilityOutput = "me"
+    // }
+    // console.log("me: " + accountability_me + accountability_someone_else + accountabiliy_not_sure);
+
+    if(accountability_me > accountabiliy_not_sure && accountability_me> accountability_someone_else){
       accountabilityOutput = "me"
+    }else if (accountabiliy_not_sure>accountability_me && accountabiliy_not_sure> accountability_someone_else) {
+      accountabilityOutput ="not_sure"
+    }else if (accountability_someone_else>accountability_me&&accountability_someone_else>accountabiliy_not_sure) {
+      accountabilityOutput ="not_me"
     }
 
     intens = intens / this.state.entryList.length;
@@ -136,19 +156,23 @@ class Understand extends React.Component {
     })
 
     // this.setState({isChoosen: true})
-    console.log("intensity: "+ intens + "| valence: " + valence +
-    "| presents an obstacle: "+ obstacle + " " + obstacleOutput + "| accountability: " + accountability + " " + accountabilityOutput);
+    // console.log("intensity: "+ intens + "| valence: " + valence +
+    // "| presents an obstacle: "+ obstacle + " " + obstacleOutput + "| responsible: " + accountability + " " + accountabilityOutput);
   }
 
   displayAccountability = () =>
     {
       if (this.state.accountability === "not_me") {
       return(
-        <Text style={{fontSize: 18}}>When you think that someone else is accountable for the event</Text>
+        <Text style={{fontSize: 18}}>When you think that someone else is responsible for the event</Text>
       )
     }else if(this.state.accountability === "me"){
       return(
-        <Text style={{fontSize: 18}}>When you think that You are accountable for the event </Text>
+        <Text style={{fontSize: 18}}>When you think that You are responsible for the event </Text>
+      )
+    }else if(this.state.accountability ==="not_sure"){
+      return(
+        <Text style={{fontSize: 18}}>When you are not sure who is responsible for the event</Text>
       )
     }
   }
@@ -158,25 +182,33 @@ class Understand extends React.Component {
 
     if(this.state.isChoosen && this.state.viewScript)
     {
+      if(!this.state.entryList.length){
+        return(
+          <View style={{alignItems: 'center'}}>
+            <Text>You do not have entries with this emotion. Please go to "Capture" to capture an emotional event that made you feel this emotion for stats.</Text>
+          </View>
+        )
+      }
+      else {
+        return(
+          <View style={{borderWidth: 1, borderColor: 'black', marginVertical: 40}}>
+            <Text>You have a tendancy to feel this emotion when..:</Text>
 
-      return(
-        <View style={{borderWidth: 1, borderColor: 'black', marginVertical: 40}}>
-          <Text>You have a tendancy to feel this emotion when..:</Text>
+
+            <Text style={{fontSize: 18}}>The intensity of the emotional event is: {this.state.intensity} / 10</Text>
+
+            <Text style={{fontSize: 18}}>The valence for the emotion is: {this.state.valence} / 10</Text>
 
 
-          <Text style={{fontSize: 18}}>The intensity of the emotional event is: {this.state.intensity} / 10</Text>
-
-          <Text style={{fontSize: 18}}>The valence for the emotion is: {this.state.valence} / 10</Text>
-
-
-          <Text style={{fontSize: 18}}>When the emotional event {this.state.obstacles}</Text>
-          {this.displayAccountability()}
-        </View>
-      )
+            <Text style={{fontSize: 18}}>When the emotional event {this.state.obstacles}</Text>
+            {this.displayAccountability()}
+          </View>
+        )
+      }
     }else {
       return(
         <View style={{justifyContent: 'center', alignItems: 'center',}}>
-          <Text style={{fontSize: 18}}>Tap on an emotion and then on 'View Script' to display your most used scripts for that emotion.</Text>
+
         </View>
 
 
@@ -184,12 +216,13 @@ class Understand extends React.Component {
     }
   }
 
-
+        // <Text style={{fontSize: 18, fontWeight: '600'}}>This page allows you to view the most likely constraints or 'script' that lead you to feel a certain emotion. The stats get more accurate with the more entries you submit.</Text>
   render () {
     return(
       <View style={{backgroundColor: 'white', flex:1}}>
 
-        <Text style={{fontSize: 18, fontWeight: '600'}}>On this page you can view the "scripts" for Your emotions.</Text>
+
+        <Text style={{fontSize: 18, fontWeight: '600'}}>Tap an emotion and then tap view script to display or update the stats!</Text>
 
 
 

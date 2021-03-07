@@ -1,8 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, Image, Dimensions, Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { StyleSheet, Alert, Image, Dimensions, Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { SearchBar, ListItem } from 'react-native-elements';
 import { getDatabase } from "../database";
+import Dialog, { DialogContent } from 'react-native-popup-dialog';
 import { NavigationContainer } from '@react-navigation/native';
 import firebase from '@firebase/app';
 import '@firebase/auth';
@@ -19,6 +20,7 @@ class Reflect extends React.Component {
       arrayholder: [],
       compareArray: [],
       shouldCompare: false,
+      dialogVisible: false,
       angry: require('../emojis/angry.jpg'),
       sad: require('../emojis/sad.jpg'),
       fear: require('../emojis/afraid.jpg'),
@@ -36,8 +38,7 @@ class Reflect extends React.Component {
   {
     getDatabase().ref('userstest/' + firebase.auth().currentUser.uid).on('value', (snapshot) =>{
       var list =[];
-      console.log(snapshot);
-      console.log(firebase.auth().currentUser.uid);
+
       snapshot.forEach((child) => {
 
         list.push({
@@ -52,6 +53,7 @@ class Reflect extends React.Component {
           emotionone: child.val().emotionone,
           emotiontwo: child.val().emotiontwo,
           emotionthree: child.val().emotionthree,
+          reflection: child.val().reflection,
           image: child.val().image,
           isSelect: false,
           selectedClass: styles.list,
@@ -63,7 +65,7 @@ class Reflect extends React.Component {
       })
       this.setState({entryList: list})
       this.setState({arrayholder: list})
-      console.log(list)
+
     })
   }
 
@@ -91,7 +93,7 @@ class Reflect extends React.Component {
   }
 
   logEntries = () =>{
-    console.log(this.state.entryList);
+    console.log();
   }
 
   selectItem = data => {
@@ -115,11 +117,11 @@ class Reflect extends React.Component {
     newArray.push(data);
 
     this.setState({compareArray: newArray})
-    console.log("data pushed:");
-    console.log(this.state.compareArray.length);
+    // console.log("data pushed:");
+    // console.log(this.state.compareArray.length);
     if(this.state.compareArray.length === 2)
     {
-      console.log("2 ELEMENTS");
+      // console.log("2 ELEMENTS");
 
       this.props.navigation.navigate("Compare", {compArray: this.state.compareArray});
       this.setState({compareArray: []});
@@ -127,7 +129,7 @@ class Reflect extends React.Component {
   }
 
   selectItem = (data) =>{
-    console.log("haha" + data.item.isSelect);
+    // console.log("haha" + data.item.isSelect);
     data.item.isSelect = !data.item.isSelect;
     data.item.selectedClass = data.item.isSelect? styles.selected : styles.entry;
 
@@ -153,10 +155,10 @@ class Reflect extends React.Component {
 
   pressEntry = (data) =>{
     if(this.state.shouldCompare){
-      console.log("comparing..");
+      // console.log("comparing..");
       this.selectItem(data);
     }else {
-      console.log("navigating..");
+      // console.log("navigating..");
 
       {this.props.navigation.navigate("Entry",
         {
@@ -172,6 +174,7 @@ class Reflect extends React.Component {
           emotionone: data.item.emotionone,
           emotiontwo: data.item.emotiontwo,
           emotionthree: data.item.emotionthree,
+          reflection: data.item.reflection,
           uri: this.getImageUri(data.item.emotionone)
         })}
     }
@@ -198,22 +201,25 @@ class Reflect extends React.Component {
 
   }
 
+
+
   renderItem = (data) =>{
     var imageuri = '';
-    console.log(data.item.emotionone);
-    console.log(this.state.entryList[0].uri);
+    // console.log(data.item.emotionone);
+    // console.log(this.state.entryList[0].uri);
     imageuri = this.getImageUri(data.item.emotionone);
     // if(data.item.emotionone === "Anger"){
     //   imageuri = this.state.angry;
     // }else {
     //   imageuri = this.state.sad;
     // }
-    console.log(imageuri);
+    // console.log(imageuri);
 
 
     return(
       <TouchableOpacity
       style={[styles.entry, data.item.selectedClass]}
+
       onPress={() => this.pressEntry(data)}
       >
 
@@ -241,7 +247,7 @@ class Reflect extends React.Component {
 
   setShouldCompare=()=>{
     this.setState({shouldCompare: !this.state.shouldCompare})
-    console.log(this.state.shouldCompare);
+    // console.log(this.state.shouldCompare);
   }
 
   displayMode=()=>{
@@ -296,12 +302,13 @@ class Reflect extends React.Component {
       <View style={{flex: 1, alignItems: 'center', backgroundColor: 'white'}}>
 
         <View style={{alignItems: 'center', backgroundColor: 'white'}}>
-          <TouchableOpacity style={{marginBottom: 10}} onPress={() => this.setShouldCompare()}><Text>Tap to change mode..</Text></TouchableOpacity>
+
+          <TouchableOpacity style={{marginBottom: 5, height:30, justifyContent: 'center', width: width, backgroundColor: "black"}} onPress={() => this.setShouldCompare()}><Text style={{color: 'white', alignSelf: 'center'}}>Tap to change mode..</Text></TouchableOpacity>
 
           <TextInput style={styles.textinput}
             onChangeText={(text) => this.searchFilterFunction(text)}
             value={this.state.searchText}
-            
+
             placeholder="Search here.."
           />
 

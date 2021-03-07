@@ -37,7 +37,7 @@ export default function UnderstandNow({route, navigation}) {
     setQuestionCount(questionCount+1);
     var index = Math.floor(Math.random() * size);
 
-    console.log("index is: " +index);
+    // console.log("index is: " +index);
     setRandomIndex(index);
   }, []);
 
@@ -107,7 +107,7 @@ export default function UnderstandNow({route, navigation}) {
     const size = entryList.length;
     var index = Math.floor(Math.random() * entryList.length);
 
-    console.log("index is: " +index);
+    // console.log("index is: " +index);
     setRandomIndex(index);
   }
 
@@ -130,11 +130,11 @@ export default function UnderstandNow({route, navigation}) {
     {
 
       setIsCorrect(true);
-      console.log("correct");
+      // console.log("correct");
     }
     else {
       setIsCorrect(false);
-      console.log("incorrect");
+      // console.log("incorrect");
     }
   }
 
@@ -158,9 +158,11 @@ export default function UnderstandNow({route, navigation}) {
     var chal_output = '';
 
     if(entryList[randomIndex].accountability ==="me"){
-      acc_output = "You are accountable for this event."
-    }else {
-      acc_output = "Someone else is accountable for this event"
+      acc_output = "You are responsible for this event."
+    }else if (entryList[randomIndex].accountability==="not_me"){
+      acc_output = "Someone else is responsible for this event"
+    }else if(entryList[randomIndex].accountability==="not_sure"){
+      acc_output = "You are not sure who is responsible for this event"
     }
 
     if(entryList[randomIndex].challenges_goals ==="yes"){
@@ -190,7 +192,8 @@ export default function UnderstandNow({route, navigation}) {
       <View style={{backgroundColor: 'white', height: height}}>
 
         <View>
-          <Text style={styles.subtitle}>What emotion would you feel if an emotional event has the following characteristics: </Text>
+          <Text style={styles.subtitle}>Can you guess which emotion you felt in this event, based only on these captured stats?</Text>
+          <Text style={{fontSize: 12, alignSelf: 'center', opacity: 0.6}}>(Capture more events to diversify the questions!)</Text>
           {displayQuestionNumb()}
 
         </View>
@@ -206,39 +209,47 @@ export default function UnderstandNow({route, navigation}) {
 
         <View style={{justifyContent: 'center', alignItems: 'center'}}>{renderOutcome()}</View>
 
-        <View style={{marginTop: 60}}>
+        <View style={{marginTop: 40}}>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <TouchableOpacity style={styles.ansbutton} onPress={() => answerPress("angry")}>
+            <TouchableOpacity style={styles.ansbutton}onPress={() => answerPress("angry")}>
+              <Image style={styles.image} source= {require('../emojis/angry.jpg')} />
               <Text style={styles.ansText}>Anger</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.ansbutton} onPress={() => answerPress("sad")}>
+            <TouchableOpacity style={styles.ansbutton}onPress={() => answerPress("sad")}>
+              <Image style={styles.image} source={require('../emojis/sad.jpg')}/>
               <Text style={styles.ansText}>Sadness</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.ansbutton} onPress={() => answerPress("shame")}>
+            <TouchableOpacity  style={styles.ansbutton}onPress={() => answerPress("shame")}>
+              <Image style={styles.image} source={require('../emojis/ashamed.jpg')}/>
               <Text style={styles.ansText}>Shame</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.ansbutton} onPress={() => answerPress("fear")}>
+            <TouchableOpacity style={styles.ansbutton}onPress={() => answerPress("fear")}>
+              <Image style={styles.image} source={require('../emojis/afraid.jpg')}/>
               <Text style={styles.ansText}>Fear</Text>
             </TouchableOpacity>
 
           </View>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <TouchableOpacity style={styles.ansbutton} onPress={() => answerPress("joy")}>
+              <Image style={styles.image} source={require('../emojis/joy.jpg')}/>
               <Text style={styles.ansText}>Joy</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.ansbutton} onPress={() => answerPress("calm")}>
+              <Image style={styles.image} source={require('../emojis/calm.jpg')}/>
               <Text style={styles.ansText}>Calm</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.ansbutton} onPress={() => answerPress("happy")}>
+              <Image style={styles.image} source={require('../emojis/happy.jpg')}/>
               <Text style={styles.ansText}>Happy</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.ansbutton} onPress={() => answerPress("surprise")}>
+              <Image style={styles.image} source={require('../emojis/surprise.jpg')}/>
               <Text style={styles.ansText}>Surprise</Text>
             </TouchableOpacity>
 
@@ -248,10 +259,10 @@ export default function UnderstandNow({route, navigation}) {
 
         <View style={{flex:1, marginBottom: 120,flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
           <TouchableOpacity style={styles.buttons}onPress={() => useHint()}>
-            <Text style={styles.ansText} >TAP FOR HINT...</Text>
+            <Text style={styles.ansTextBot} >TAP FOR HINT...</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.buttons} onPress={() => nextQuestion()}>
-            <Text style={styles.ansText}>NEW QUESTION</Text>
+            <Text style={styles.ansTextBot}>NEW QUESTION</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -271,24 +282,28 @@ const styles = StyleSheet.create({
   },
   ansbutton:{
     marginHorizontal: 10,
-    marginVertical: 10,
-    width: 80,
-    height: 30,
-    backgroundColor: '#1b1054',
-    borderRadius: 20
 
   },
   ansText:{
-    color: 'white',
-    fontSize: 16,
-    alignSelf: 'center',
+    color: 'black',
+    alignSelf: 'center'
 
+  },
+  ansTextBot:{
+    color: 'white',
+    alignSelf: 'center',
+    fontSize: 18,
   },
   buttons:{
     backgroundColor: '#1b1054',
     borderRadius: 20,
     height: 35,
+    width:200,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  image:{
+    width:60,
+    height:60
   }
 })

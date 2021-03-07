@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, Image, Text, View, TextInput, FlatList, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView } from 'react-native';
+import {  Platform, PlatformColor, StyleSheet, Image, Text, View, TextInput, FlatList, TouchableOpacity, useWindowDimensions, KeyboardAvoidingView } from 'react-native';
 
 export default function CompareScreen({route, navigation}){
   const width = useWindowDimensions().width;
@@ -38,12 +38,12 @@ export default function CompareScreen({route, navigation}){
       console.log("equal");
 
       return(
-        <Text style={{color: 'green', fontSize: 20, alignSelf: 'center'}}>{item.emotionone.toUpperCase()}</Text>
+        <Text style={styles.equalText}>{item.emotionone.toUpperCase()}</Text>
       )
       // setEqualCounter(equalCounter+1);
     }else {
       return(
-        <Text style={{color:'red', fontSize: 20, alignSelf: 'center'}}>{item.emotionone.toUpperCase()}</Text>
+        <Text style={styles.notEqualText}>{item.emotionone.toUpperCase()}</Text>
       )
     }
   }
@@ -55,26 +55,33 @@ export default function CompareScreen({route, navigation}){
       console.log("equal");
       // setEqualCounter(equalCounter+1);
       return(
-        <Text style={{color: 'green', fontSize: 20}}>{item.what_happened}</Text>
+        <Text style={styles.equalText}>{item.what_happened}</Text>
       )
     }else {
       return(
-        <Text style={{color: 'red', fontSize: 20}}>{item.what_happened}</Text>
+        <Text style={styles.notEqualText}>{item.what_happened}</Text>
       )
     }
   }
   //who was involved
   function displayWhoWasInvolved(item){
+    let entryone = entryOne.who_was_involved
+    // let entryonewords = entryone.split(" ")
+    console.log(entryone);
+    let entrytwo = entryTwo.whoo_was_involved
+    // let entrytwowords = entrytwo.split(" ")
+
+    // console.log(entryonewords + " " + entrytwowords);
     if(entryOne.who_was_involved === entryTwo.who_was_involved)
     {
-      console.log("equal");
+
       //setEqualCounter(equalCounter++);
       return(
-        <Text style={{color: 'green', fontSize: 20}}>{item.who_was_involved}</Text>
+        <Text style={styles.equalText}>{item.who_was_involved}</Text>
       )
     }else {
       return(
-        <Text style={{color: 'red', fontSize: 20}}>{item.who_was_involved}</Text>
+        <Text style={styles.notEqualText}>{item.who_was_involved}</Text>
       )
     }
   }
@@ -82,14 +89,14 @@ export default function CompareScreen({route, navigation}){
   function displayWhereHappened(item){
     if(entryOne.where_happened === entryTwo.where_happened)
     {
-      console.log("equal");
+
       //setEqualCounter(equalCounter++);
       return(
-        <Text style={{color: 'green', fontSize: 20}}>{item.where_happened}</Text>
+        <Text style={styles.equalText}>{item.where_happened}</Text>
       )
     }else {
       return(
-        <Text style={{color: 'red', fontSize: 20}}>{item.where_happened}</Text>
+        <Text style={styles.notEqualText}>{item.where_happened}</Text>
       )
     }
   }
@@ -97,18 +104,18 @@ export default function CompareScreen({route, navigation}){
   function displayIntensity(item){
     if(entryOne.intensityValue === entryTwo.intensityValue)
     {
-      console.log("equal");
+
     //  setEqualCounter(equalCounter++);
       return(
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{color: 'green', fontSize: 20}}>{item.intensityeValue}</Text>
+          <Text style={styles.equalText}>{item.intensityeValue}</Text>
           <Text>/10</Text>
         </View>
       )
     }else {
       return(
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{color: 'red', fontSize: 20}}>{item.intensityValue}</Text>
+          <Text style={styles.notEqualText}>{item.intensityValue}</Text>
           <Text>/10</Text>
         </View>
       )
@@ -118,11 +125,11 @@ export default function CompareScreen({route, navigation}){
   function displayValence(item){
     if(entryOne.valenceValue === entryTwo.valenceValue)
     {
-      console.log("equal");
+
     //  setEqualCounter(equalCounter++);
       return(
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{color: 'green', fontSize: 20}}>{item.valenceValue}</Text>
+          <Text style={styles.equalText}>{item.valenceValue}</Text>
           <Text>/10</Text>
         </View>
 
@@ -130,7 +137,7 @@ export default function CompareScreen({route, navigation}){
     }else {
       return(
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Text style={{color: 'red', fontSize: 20}}>{item.valenceValue}</Text>
+          <Text style={styles.notEqualText}>{item.valenceValue}</Text>
           <Text>/10</Text>
         </View>
 
@@ -138,55 +145,71 @@ export default function CompareScreen({route, navigation}){
     }
   }
   function displayAccountability(item){
+    const resp_me = "I am responsible for what happened in this event";
+    const resp_not_me = "Someone else is responsible for what happened in this event";
+    const resp_not_sure = "I am not sure who is responsible for this event";
     if(item.accountability === "me"){
-      console.log("accountability = me");
+
       if(entryOne.accountability === entryTwo.accountability){
         return(
-          <Text style={{color: 'green'}}>{item.accountability}</Text>
+         <Text style={styles.equalText}>{resp_me}</Text>
+
         )
-        console.log("they are equal");
+
       }else {
-        console.log("not equal");
+
         return(
-          <Text style={{color: 'red'}}>{item.accountability}</Text>
+          <Text style={styles.notEqualText}>{resp_me}</Text>
+        )
+      }
+    }else if(item.accountability=="not_me"){
+
+      if(entryOne.accountability === entryTwo.accountability){
+
+        return(
+          <Text style={styles.equalText}>{resp_not_me}</Text>
+        )
+      }else {
+
+        return(
+          <Text style={styles.notEqualText}>{resp_not_me}</Text>
         )
       }
     }else {
-      console.log("not me");
       if(entryOne.accountability === entryTwo.accountability){
-        console.log("equal");
         return(
-          <Text style={{color: 'green'}}>{item.accountability}</Text>
+          <Text style={styles.equalText}>{resp_not_sure}</Text>
         )
       }else {
-        console.log("not equal");
         return(
-          <Text style={{color: 'red'}}>{item.accountability}</Text>
+          <Text style={styles.notEqualText}>{resp_not_sure}</Text>
         )
       }
     }
   }
 
   function displayChal_Goals(item){
+    const is_challenge = "Presents an obstacle towards my goal(s)";
+    const not_challenge = "Does not present an obstacle towards my goal(s)"
 
     if(item.challenges_goals === "yes"){
       if(entryOne.challenges_goals === entryTwo.challenges_goals){
         return(
-          <Text style={{color: 'green'}}>{item.challenges_goals}</Text>
+          <Text style={styles.equalText}>{is_challenge}</Text>
         )
       }else {
         return(
-          <Text style={{color: 'red'}}>{item.challenges_goals}</Text>
+          <Text style={styles.notEqualText}>{is_challenge}</Text>
         )
       }
     }else {
       if(entryOne.challenges_goals === entryTwo.challenges_goals){
         return(
-          <Text style={{color: 'green'}}>{item.challenges_goals}</Text>
+          <Text style={styles.equalText}>{not_challenge}</Text>
         )
       }else {
         return(
-          <Text style={{color: 'red'}}>{item.challenges_goals}</Text>
+          <Text style={styles.notEqualText}>{not_challenge}</Text>
         )
       }
     }
@@ -242,12 +265,16 @@ export default function CompareScreen({route, navigation}){
             {displayValence(item)}
           </View>
 
-
+          <View>
+          <Text style={styles.text}>Responsibility for the event</Text>
           {displayAccountability(item)}
-          {displayChal_Goals(item)}
+          </View>
 
-          <Text></Text>
-          <Text></Text>
+          <View>
+          <Text style={styles.text}>This event</Text>
+          {displayChal_Goals(item)}
+          </View>
+
         </View>
       )}
     />
@@ -260,5 +287,16 @@ const styles = StyleSheet.create({
   },
   entrytext:{
     fontSize: 20,
+  },
+  equalText:{
+    color: 'rgb(47, 255, 0)',
+    fontSize: 24,
+    
+    fontStyle: 'italic',
+  },
+  notEqualText:{
+    color: '#FF0000',
+    fontSize: 18,
+
   }
 })

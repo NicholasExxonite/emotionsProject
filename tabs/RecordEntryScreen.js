@@ -22,9 +22,16 @@ class RecordEntryScreen extends Component {
     emotionone: '',
     emotiontwo: '',
     emotionthree: '',
-    visible: false,
+
+    visible1: false,
+    visible2: false,
+
     isselectNo: false,
     isselectYes: false,
+
+    resp_i_am: false,
+    resp_some_else: false,
+    resp_not_sure: false,
   }
 
   setValenceValue = (value) =>{
@@ -70,6 +77,28 @@ class RecordEntryScreen extends Component {
 
   }
 
+  resp_changeStyle= (text) =>{
+    if(text === "i_am"){
+      if(this.state.resp_i_am){
+        return styles.resp_button_selected
+      }else {
+        return styles.resp_button
+      }
+    }else if (text === "someone_else") {
+      if(this.state.resp_some_else){
+        return styles.resp_button_selected
+      }else {
+        return styles.resp_button
+      }
+    }else {
+      if(this.state.resp_not_sure){
+        return styles.resp_button_selected
+      }else {
+        return styles.resp_button
+      }
+    }
+  }
+
   onPressSubmit = (valence, intensity, what, where, who, challenges, accountability, img, emone, emtwo, emthree) => {
     var userId = firebase.auth().currentUser.uid;
     getDatabase().ref('userstest/'+ userId).push({
@@ -87,6 +116,27 @@ class RecordEntryScreen extends Component {
     });
   }
 
+  displayModal =(text)=>{
+    return(
+      <View style={{marginRight: 10,}}>
+        <TouchableOpacity style={{ height: 30, width:30,borderWidth: 1, borderRadius: 60,alignItems: 'center', justifyContent: 'center', opacity: 0.5,}}onPress={() => {
+            this.setState({visible1: true})
+          }}><Text>?</Text></TouchableOpacity>
+
+        <Dialog
+          visible={this.state.visible1}
+          onTouchOutside={() => {
+            this.setState({visible1: false });
+          }}
+          >
+          <DialogContent>
+            <Text>{text}</Text>
+          </DialogContent>
+        </Dialog>
+      </View>
+    )
+  }
+
   render () {
 
     return(
@@ -100,7 +150,8 @@ class RecordEntryScreen extends Component {
             placeholder = "Who was involved.." placeholderTextColor="black"/>
         </View>
 
-        <View style={{marginTop: 40}}>
+        <View style={{marginTop: 40, alignItems: 'center',flexDirection: 'row', flexWrap: 'wrap'}}>
+          {this.displayModal('This slider represents on a scale from 0-10 how significant the event is to your personal life. 0 would mean that the event has almost no significane to your personal life. 10 would mean that the event has a huge significance to your personal life.')}
           <Text style={{fontSize: 18}}>How would you rate the significance of this situation to your personal life?</Text>
         </View>
 
@@ -121,7 +172,7 @@ class RecordEntryScreen extends Component {
         />
 
         <View style={{marginTop: 40}}>
-          <Text style={{fontSize: 18}}>Does the situation present an obstacle for Your goals</Text>
+          <Text style={{fontSize: 18, alignItems: 'center'}}>Does the situation present an obstacle for Your goals</Text>
         </View>
 
         <View style={{flexDirection: 'row', flexWrap: 'wrap',
@@ -151,52 +202,39 @@ class RecordEntryScreen extends Component {
          marginTop: 30,
           }}>
         <TouchableOpacity
-           style={{
-             height: height*0.15,
-             width: width*0.3,
-             backgroundColor: '#1b1054',
-             marginBottom: 30,
-             alignItems: 'center',
-             justifyContent: 'center',
-             borderRadius: 60
-           }}
-           onPress={() => this.setState({accountability: 'me'})}>
-            <Text style={styles.buttonsText}>I am</Text>
+           style={this.resp_changeStyle("i_am")}
+           onPress={() => this.setState({accountability: 'me', resp_i_am: !this.state.resp_i_am, resp_not_sure: false, resp_some_else: false})}>
+            <Text style={{fontSize: 16, fontWeight: '600', color: 'white'}}>I am</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-           style={{
-             height: height*0.15,
-             width: width*0.3,
-             backgroundColor: '#1b1054',
-             marginBottom: 30,
-             alignItems: 'center',
-             justifyContent: 'center',
-             borderRadius: 60,
+           style={this.resp_changeStyle("someone_else")}
+           onPress={() => this.setState({accountability: 'not_me', resp_some_else: !this.state.resp_some_else, resp_i_am: false, resp_not_sure: false})}>
+            <Text style={{fontSize: 16, fontWeight: '600', color: 'white'}}>Someone else</Text>
+        </TouchableOpacity>
 
-           }}
-           onPress={() => this.setState({accountability: 'not_me'})}>
-            <Text style={{fontSize: 20, fontWeight: '600', color: 'white'}}>Someone else</Text>
+        <TouchableOpacity
+           style={this.resp_changeStyle("not_sure")}
+           onPress={() => this.setState({accountability: 'not_sure', resp_not_sure: !this.state.resp_not_sure, resp_i_am: false, resp_some_else: false})}>
+            <Text style={{fontSize: 16, fontWeight: '600', color: 'white'}}>Not sure</Text>
         </TouchableOpacity>
         </View>
 
-        <View style={{marginTop: 40, alignItems: 'center',flexDirection: 'row'}}>
-          <View>
-            <Button
-              title="?"
-              color="#1b1054"
-              onPress={() => {
-                this.setState({ visible: true });
-                }}
-              />
+        <View style={{marginTop: 40, alignItems: 'center',flexDirection: 'row', flexWrap: 'wrap'}}>
+
+          <View style={{marginRight: 10,}}>
+            <TouchableOpacity style={{ height: 30, width:30,borderWidth: 1, borderRadius: 60,alignItems: 'center', justifyContent: 'center', opacity: 0.5,}} onPress={() => {
+                this.setState({visible2: true})
+              }}><Text style={{fontSize: 20}}>?</Text></TouchableOpacity>
+
             <Dialog
-              visible={this.state.visible}
+              visible={this.state.visible2}
               onTouchOutside={() => {
-                this.setState({ visible: false });
+                this.setState({ visible2: false });
               }}
               >
               <DialogContent>
-                <Text>This slider represents Intensity of an emotion. 0 means the intensity is weak, and coping with the event is easy. 10 means the intensity is really strong, and coping with the event is hard.</Text>
+                <Text>This slider represents on a scale from 0-10 how intense the emotional event is. 0 means that the intensity was really low andx coping with the event will be EASY. 10 means the intensity was really high and coping with the event will be HARD</Text>
               </DialogContent>
             </Dialog>
           </View>
@@ -295,7 +333,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 60
-  }
+  },
+  resp_button:{
+    height: height*0.12,
+    width: width*0.25,
+    backgroundColor: '#1b1054',
+    marginBottom: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 60
+  },
+  resp_button_selected:{
+    height: height*0.12,
+    width: width*0.25,
+    backgroundColor: 'green',
+    marginBottom: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 60
+  },
 })
 
 export default RecordEntryScreen;
