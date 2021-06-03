@@ -6,14 +6,15 @@ import 'firebase/database';
 let initialized = false;
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD3ww9qjogp1cgsuns2wCoNjtKcKV3hC5Y",
-  authDomain: "typ-supportingemotions.firebaseapp.com",
-  databaseURL: "https://typ-supportingemotions-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "typ-supportingemotions",
-  storageBucket: "typ-supportingemotions.appspot.com",
-  messagingSenderId: "693078632057",
-  appId: "1:693078632057:web:3192415660c408ec45d6a8",
-  measurementId: "G-3ZZRWQD3W8"
+//   Add your firebase api config.
+  apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: ""
 };
 
 try{
