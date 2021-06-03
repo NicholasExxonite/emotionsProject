@@ -6,3 +6,6 @@ Built with React-Native(Expo.io) for IOS and Android. FireBase used for database
 
 
 ! Emoion emojis attribution to: rawpixel.com / Freepik
+
+
+Google-services.json file and firebase api config is omitted from the repo. 
